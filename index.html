@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Link Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- Base Styles --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        h1 { margin-top: 0; font-size: 24px; color: #111; }
+        p { color: #666; margin-bottom: 25px; }
+
+        /* --- Inputs & Main Button --- */
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            outline: none;
+            margin-bottom: 15px;
+            font-family: 'Inter', sans-serif;
+        }
+        input[type="text"]:focus, textarea:focus { border-color: #0061fe; }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #888;
+            text-align: left;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+
+        .input-error {
+            font-size: 12px;
+            color: #dc3545;
+            text-align: left;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        /* --- Restriction Controls --- */
+        .restriction-panel {
+            background: #f8f9fa;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .restriction-panel h3 {
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+        }
+
+        .restriction-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .restriction-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .restriction-row label {
+            font-size: 14px;
+            color: #333;
+            margin: 0;
+            min-width: 140px;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        /* Slider styles */
+        .slider-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #0061fe;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #0061fe;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .slider-value {
+            background: #0061fe;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .slider-value.full-access {
+            background: #28a745;
+        }
+
+        /* Toggle switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #28a745;
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .toggle-switch input:disabled + .toggle-slider {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        .toggle-status {
+            font-size: 13px;
+            color: #666;
+            min-width: 70px;
+        }
+
+        .toggle-status.enabled {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .toggle-status.disabled {
+            color: #999;
+        }
+
+        .restriction-note {
+            font-size: 11px;
+            color: #999;
+            margin-top: 8px;
+            padding-left: 155px;
+            font-style: italic;
+        }
+
+        /* Access mode indicator */
+        .access-mode {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .access-mode.preview {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .access-mode.view-only {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .access-mode.full {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .generate-btn {
+            flex: 1;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #0061fe;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .generate-btn:hover { background: #004bb5; }
+        .generate-btn:active { transform: scale(0.98); }
+
+        .clear-btn {
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .clear-btn:hover {
+            background: #e9ecef;
+            border-color: #ccc;
+        }
+
+        /* --- Results Section --- */
+        #results {
+            margin-top: 30px;
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .results-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            font-weight: 600;
+            margin-top: 20px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .results-label:first-of-type {
+            margin-top: 0;
+        }
+
+        .result-wrapper {
+            position: relative;
+        }
+
+        .code-box {
+            background: #f8f9fa;
+            padding: 15px;
+            padding-right: 80px;
+            border: 1px solid #e1e1e1;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            color: #444;
+            word-break: break-all;
+            min-height: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: white;
+            border: 1px solid #ccc;
+            color: #333;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            background: #eee;
+        }
+
+        .section-divider {
+            margin: 25px 0;
+            border-top: 2px dashed #ddd;
+            position: relative;
+        }
+        .section-divider span {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 0 12px;
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>LibGuide PDF Generator</h1>
+        <p>Paste your Dropbox link and configure access restrictions.</p>
+
+        <input type="text" id="dropboxLink" placeholder="https://www.dropbox.com/..." autofocus>
+        <div class="input-error" id="linkError">Please enter a valid Dropbox link.</div>
+
+        <textarea id="citation" placeholder="Author, Name. Book Title. Place: Publisher, Year."></textarea>
+        <div class="input-hint">Optional: Add citation for accordion-style output (HTML like &lt;em&gt; allowed)</div>
+
+        <!-- Restriction Controls -->
+        <div class="restriction-panel">
+            <h3>Access Restrictions</h3>
+            
+            <div class="restriction-row">
+                <label for="limitSlider">Preview Limit:</label>
+                <div class="slider-container">
+                    <input type="range" id="limitSlider" min="5" max="100" step="5" value="20">
+                    <span class="slider-value" id="limitValue">20%</span>
+                </div>
+            </div>
+            
+            <div class="restriction-row">
+                <label for="downloadToggle">Allow Download:</label>
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="downloadToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-status disabled" id="downloadStatus">Disabled</span>
+                </div>
+            </div>
+            <div class="restriction-note" id="downloadNote">Downloads automatically disabled when preview is limited</div>
+            
+            <div style="text-align: center;">
+                <span class="access-mode preview" id="accessMode">Preview Mode (20%)</span>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button class="generate-btn" onclick="generateLink()">Generate Code</button>
+            <button class="clear-btn" onclick="clearForm()">Clear</button>
+        </div>
+
+        <div id="results" style="display:none;">
+
+            <span class="results-label">Master Link</span>
+            <div class="result-wrapper">
+                <div class="code-box" id="finalLink"></div>
+                <button class="copy-btn" onclick="copyToClipboard('finalLink', this)">Copy</button>
+            </div>
+
+            <span class="results-label">Standard Embed Code</span>
+            <div class="result-wrapper">
+                <div class="code-box" id="embedCode"></div>
+                <button class="copy-btn" onclick="copyToClipboard('embedCode', this)">Copy</button>
+            </div>
+
+            <div class="section-divider"><span>Accordion Style</span></div>
+
+            <span class="results-label">Accordion Code (Self-contained)</span>
+            <div class="result-wrapper">
+                <div class="code-box" id="accordionCode"></div>
+                <button class="copy-btn" onclick="copyToClipboard('accordionCode', this)">Copy</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- YOUR SETTINGS ---
+        const VIEWER_URL = "https://thedtl.github.io/restricted-pdf-reader/web/viewer.html";
+        const WORKER_URL = "https://restricteddropboxguard.ccrawford.workers.dev/";
+        // ---------------------
+
+        // --- UI State Management ---
+        const limitSlider = document.getElementById('limitSlider');
+        const limitValue = document.getElementById('limitValue');
+        const downloadToggle = document.getElementById('downloadToggle');
+        const downloadStatus = document.getElementById('downloadStatus');
+        const downloadNote = document.getElementById('downloadNote');
+        const accessMode = document.getElementById('accessMode');
+
+        function updateUI() {
+            const limit = parseInt(limitSlider.value);
+            const isFullAccess = limit === 100;
+            const downloadEnabled = downloadToggle.checked;
+
+            // Update slider display
+            if (isFullAccess) {
+                limitValue.textContent = 'Full';
+                limitValue.classList.add('full-access');
+            } else {
+                limitValue.textContent = limit + '%';
+                limitValue.classList.remove('full-access');
+            }
+
+            // Handle download toggle based on limit
+            if (!isFullAccess) {
+                // Force download off when limited
+                downloadToggle.checked = false;
+                downloadToggle.disabled = true;
+                downloadStatus.textContent = 'Disabled';
+                downloadStatus.className = 'toggle-status disabled';
+                downloadNote.style.display = 'block';
+            } else {
+                downloadToggle.disabled = false;
+                downloadNote.style.display = 'none';
+                if (downloadToggle.checked) {
+                    downloadStatus.textContent = 'Enabled';
+                    downloadStatus.className = 'toggle-status enabled';
+                } else {
+                    downloadStatus.textContent = 'Disabled';
+                    downloadStatus.className = 'toggle-status disabled';
+                }
+            }
+
+            // Update access mode badge
+            if (!isFullAccess) {
+                accessMode.textContent = `Preview Mode (${limit}%)`;
+                accessMode.className = 'access-mode preview';
+            } else if (!downloadToggle.checked) {
+                accessMode.textContent = 'View Only (No Download)';
+                accessMode.className = 'access-mode view-only';
+            } else {
+                accessMode.textContent = 'Full Access';
+                accessMode.className = 'access-mode full';
+            }
+        }
+
+        limitSlider.addEventListener('input', updateUI);
+        downloadToggle.addEventListener('change', updateUI);
+
+        // Initialize UI
+        updateUI();
+
+        // --- Generate Link ---
+        function generateLink() {
+            const input = document.getElementById('dropboxLink').value.trim();
+            const citation = document.getElementById('citation').value.trim() || 'Author, Name. <em>Book Title</em>. Year.';
+            const errorEl = document.getElementById('linkError');
+            
+            const limit = parseInt(limitSlider.value);
+            const allowDownload = downloadToggle.checked && limit === 100;
+
+            // Reset error state
+            errorEl.style.display = 'none';
+
+            if (!input) {
+                errorEl.textContent = "Please paste a link first!";
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            // Validate it's a Dropbox link
+            if (!input.includes('dropbox.com/')) {
+                errorEl.textContent = "This doesn't look like a Dropbox link.";
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            let base64Link;
+            try {
+                base64Link = btoa(encodeURIComponent(input).replace(/%([0-9A-F]{2})/g,
+                    function toSolidBytes(match, p1) {
+                        return String.fromCharCode('0x' + p1);
+                }));
+            } catch (e) {
+                errorEl.textContent = "Error: Could not encode link.";
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            // Build the worker URL with the encoded file parameter
+            const workerWithFile = `${WORKER_URL}?file=${base64Link}`;
+
+            // Build viewer URL with restriction parameters
+            const viewerParams = new URLSearchParams();
+            viewerParams.set('file', workerWithFile);
+            viewerParams.set('limit', limit.toString());
+            viewerParams.set('download', allowDownload.toString());
+
+            const finalUrl = `${VIEWER_URL}?${viewerParams.toString()}`;
+
+            // Generate button text based on settings
+            const buttonText = limit === 100 
+                ? (allowDownload ? 'Open PDF' : 'Open PDF (View Only)')
+                : `Open Preview (${limit}%)`;
+
+            // Create the standard HTML embed code
+            const embedHtml = `<!-- Mobile Friendly Link -->
+<div style="text-align: right; margin-bottom: 8px;">
+    <a href="${finalUrl}" target="_blank" rel="noopener" style="text-decoration: none; color: #333; font-family: sans-serif; font-size: 0.9em; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; background-color: #f9f9f9;">
+        <span style="font-size: 1.1em; margin-right: 4px;">&#x2197;</span> ${buttonText}
+    </a>
+</div>
+<!-- The PDF Reader -->
+<iframe src="${finalUrl}" width="100%" height="900" style="border: 1px solid #ccc; border-radius: 4px;" referrerpolicy="origin" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>`;
+
+            // Create the self-contained Accordion Code
+            const accordionCode = `<style>
+.dtl_book_accordion {
+  margin-bottom: 0 !important;
+  border: none !important;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+
+.dtl_book_header {
+  background-color: #f9f9f9;
+  padding: 18px 18px;
+  cursor: pointer;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 14px !important;
+  font-family: sans-serif;
+  transition: background-color 0.2s;
+  box-shadow: none !important;
+}
+.dtl_book_header:hover { background-color: #f0f0f0; }
+.dtl_book_header:focus { outline: none !important; }
+
+.dtl_citation {
+  flex: 0 1 auto;
+  min-width: 0;
+  text-align: left !important;
+  font-size: clamp(11.264px, 1.2288vw, 15.36px) !important;
+  font-weight: 800 !important;
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.dtl_toggle_text {
+  flex: 0 0 auto;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  color: #666;
+  padding: 6px 14px;
+  border: none !important;
+  border-radius: 999px;
+  background: #fff;
+  white-space: nowrap;
+  box-shadow: none !important;
+}
+.dtl_book_header:hover .dtl_toggle_text { background: #eee; }
+
+.dtl_book_content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+.dtl_book_accordion.dtl_open .dtl_book_content { max-height: 2000px; }
+
+.dtl_book_content_inner {
+  padding: 0;
+  background: transparent;
+  margin: 0;
+}
+.dtl_book_accordion.dtl_open .dtl_book_content_inner {
+  padding: 12px;
+  background: #fff;
+}
+
+.dtl_fullscreen_link { text-align: right; margin-bottom: 8px; }
+.dtl_fullscreen_link a {
+  text-decoration: none;
+  color: #333;
+  font-family: sans-serif;
+  font-size: 0.9em;
+  border: none !important;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  box-shadow: none !important;
+}
+.dtl_fullscreen_link a:hover { background-color: #eee; }
+</style>
+
+<div class="dtl_book_accordion">
+  <div class="dtl_book_header" tabindex="0"
+    onclick="(function(el){var a=el.parentElement,t=el.querySelector('.dtl_toggle_text');a.classList.toggle('dtl_open');t.textContent=a.classList.contains('dtl_open')?'Collapse':'Click to See Preview';})(this)"
+    onkeydown="if(event.key==='Enter'){this.click()}">
+    <div class="dtl_citation">${citation}</div>
+    <span class="dtl_toggle_text">Click to See Preview</span>
+  </div>
+
+  <div class="dtl_book_content">
+    <div class="dtl_book_content_inner">
+      <div class="dtl_fullscreen_link">
+        <a href="${finalUrl}" target="_blank" rel="noopener">
+          <span style="margin-right: 4px;">↗</span> ${buttonText}
+        </a>
+      </div>
+      <iframe src="${finalUrl}" width="100%" height="700"
+        style="border: none !important; border-radius: 4px; box-shadow: none !important;"
+        referrerpolicy="origin" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>`;
+
+            // Show Results
+            document.getElementById('finalLink').textContent = finalUrl;
+            document.getElementById('embedCode').textContent = embedHtml;
+            document.getElementById('accordionCode').textContent = accordionCode;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        // --- Clear Form Function ---
+        function clearForm() {
+            document.getElementById('dropboxLink').value = '';
+            document.getElementById('citation').value = '';
+            document.getElementById('linkError').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            
+            // Reset restrictions to defaults
+            limitSlider.value = 20;
+            downloadToggle.checked = false;
+            updateUI();
+            
+            document.getElementById('dropboxLink').focus();
+        }
+
+        // --- Copy Functionality ---
+        function copyToClipboard(elementId, btnElement) {
+            const textToCopy = document.getElementById(elementId).textContent;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = btnElement.textContent;
+                btnElement.textContent = "Copied!";
+                btnElement.style.background = "#d1e7dd";
+                btnElement.style.borderColor = "#badbcc";
+                btnElement.style.color = "#0f5132";
+
+                setTimeout(() => {
+                    btnElement.textContent = originalText;
+                    btnElement.style.background = "white";
+                    btnElement.style.borderColor = "#ccc";
+                    btnElement.style.color = "#333";
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        // --- Enter key to generate ---
+        document.getElementById('dropboxLink').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateLink();
+            }
+        });
+    </script>
+
+</body>
+</html>
