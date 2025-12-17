@@ -114,12 +114,29 @@
             accent-color: #0061fe;
         }
 
+        .checkbox-row input[type="checkbox"]:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
         .checkbox-row label {
             font-size: 14px;
             color: #333;
             cursor: pointer;
             margin: 0;
             user-select: none;
+        }
+
+        .checkbox-row.disabled label {
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .checkbox-hint {
+            font-size: 11px;
+            color: #999;
+            margin-left: 4px;
+            font-style: italic;
         }
 
         /* Slider row */
@@ -367,9 +384,10 @@
                 </div>
             </div>
             
-            <div class="checkbox-row">
-                <input type="checkbox" id="downloadCheckbox">
+            <div class="checkbox-row" id="downloadRow">
+                <input type="checkbox" id="downloadCheckbox" disabled>
                 <label for="downloadCheckbox">Allow download</label>
+                <span class="checkbox-hint">(only available if no viewing limits is selected)</span>
             </div>
             
             <div style="text-align: center;">
@@ -418,6 +436,7 @@
         const limitValue = document.getElementById('limitValue');
         const noLimitCheckbox = document.getElementById('noLimitCheckbox');
         const downloadCheckbox = document.getElementById('downloadCheckbox');
+        const downloadRow = document.getElementById('downloadRow');
         const sliderRow = document.getElementById('sliderRow');
         const accessMode = document.getElementById('accessMode');
 
@@ -433,6 +452,16 @@
                 sliderRow.classList.remove('disabled');
             }
 
+            // Enable/disable download checkbox based on no limit selection
+            if (noLimit) {
+                downloadCheckbox.disabled = false;
+                downloadRow.classList.remove('disabled');
+            } else {
+                downloadCheckbox.disabled = true;
+                downloadCheckbox.checked = false;
+                downloadRow.classList.add('disabled');
+            }
+
             // Update slider display
             limitValue.textContent = limitSlider.value + '%';
 
@@ -440,7 +469,7 @@
             if (!noLimit) {
                 accessMode.textContent = `Preview Mode (${limitSlider.value}%)`;
                 accessMode.className = 'access-mode preview';
-            } else if (!downloadEnabled) {
+            } else if (!downloadCheckbox.checked) {
                 accessMode.textContent = 'View Only (No Download)';
                 accessMode.className = 'access-mode view-only';
             } else {
@@ -464,7 +493,7 @@
             
             const noLimit = noLimitCheckbox.checked;
             const limit = noLimit ? 100 : parseInt(limitSlider.value);
-            const allowDownload = downloadCheckbox.checked;
+            const allowDownload = noLimit && downloadCheckbox.checked;
 
             // Reset error state
             errorEl.style.display = 'none';
