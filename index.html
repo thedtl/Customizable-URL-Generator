@@ -364,9 +364,6 @@
         <input type="text" id="dropboxLink" placeholder="https://www.dropbox.com/..." autofocus>
         <div class="input-error" id="linkError">Please enter a valid Dropbox link.</div>
 
-        <textarea id="citation" placeholder="Author, Name. Book Title. Place: Publisher, Year."></textarea>
-        <div class="input-hint">Optional: Add citation for accordion-style output (HTML like &lt;em&gt; allowed)</div>
-
         <!-- Restriction Controls -->
         <div class="restriction-panel">
             <h3>Access Restrictions</h3>
@@ -395,6 +392,18 @@
             </div>
         </div>
 
+        <!-- Collapsible Mode -->
+        <div class="restriction-panel">
+            <div class="checkbox-row">
+                <input type="checkbox" id="collapsibleCheckbox">
+                <label for="collapsibleCheckbox">Enable collapsible accordion style</label>
+            </div>
+            
+            <div id="citationRow" style="display: none; margin-top: 15px;">
+                <textarea id="citation" placeholder="Author, Book Title" style="margin-bottom: 0;"></textarea>
+            </div>
+        </div>
+
         <div class="button-row">
             <button class="generate-btn" onclick="generateLink()">Generate Code</button>
             <button class="clear-btn" onclick="clearForm()">Clear</button>
@@ -414,12 +423,14 @@
                 <button class="copy-btn" onclick="copyToClipboard('embedCode', this)">Copy</button>
             </div>
 
-            <div class="section-divider"><span>Accordion Style</span></div>
+            <div class="section-divider" id="accordionDivider"><span>Accordion Style</span></div>
 
-            <span class="results-label">Accordion Code (Self-contained)</span>
-            <div class="result-wrapper">
-                <div class="code-box" id="accordionCode"></div>
-                <button class="copy-btn" onclick="copyToClipboard('accordionCode', this)">Copy</button>
+            <div id="accordionSection">
+                <span class="results-label">Accordion Code (Self-contained)</span>
+                <div class="result-wrapper">
+                    <div class="code-box" id="accordionCode"></div>
+                    <button class="copy-btn" onclick="copyToClipboard('accordionCode', this)">Copy</button>
+                </div>
             </div>
 
         </div>
@@ -439,6 +450,13 @@
         const downloadRow = document.getElementById('downloadRow');
         const sliderRow = document.getElementById('sliderRow');
         const accessMode = document.getElementById('accessMode');
+        const collapsibleCheckbox = document.getElementById('collapsibleCheckbox');
+        const citationRow = document.getElementById('citationRow');
+
+        // Toggle citation field visibility
+        collapsibleCheckbox.addEventListener('change', function() {
+            citationRow.style.display = this.checked ? 'block' : 'none';
+        });
 
         function updateUI() {
             const noLimit = noLimitCheckbox.checked;
@@ -488,8 +506,9 @@
         // --- Generate Link ---
         function generateLink() {
             const input = document.getElementById('dropboxLink').value.trim();
-            const citation = document.getElementById('citation').value.trim() || 'Author, Name. <em>Book Title</em>. Year.';
             const errorEl = document.getElementById('linkError');
+            const isCollapsible = collapsibleCheckbox.checked;
+            const citation = isCollapsible ? (document.getElementById('citation').value.trim() || 'Document Title') : '';
             
             const noLimit = noLimitCheckbox.checked;
             const limit = noLimit ? 100 : parseInt(limitSlider.value);
@@ -653,7 +672,17 @@
             // Show Results
             document.getElementById('finalLink').textContent = finalUrl;
             document.getElementById('embedCode').textContent = embedHtml;
-            document.getElementById('accordionCode').textContent = accordionCode;
+            
+            // Show/hide accordion section based on collapsible mode
+            if (isCollapsible) {
+                document.getElementById('accordionCode').textContent = accordionCode;
+                document.getElementById('accordionDivider').style.display = 'block';
+                document.getElementById('accordionSection').style.display = 'block';
+            } else {
+                document.getElementById('accordionDivider').style.display = 'none';
+                document.getElementById('accordionSection').style.display = 'none';
+            }
+            
             document.getElementById('results').style.display = 'block';
         }
 
@@ -668,6 +697,8 @@
             limitSlider.value = 20;
             noLimitCheckbox.checked = false;
             downloadCheckbox.checked = false;
+            collapsibleCheckbox.checked = false;
+            citationRow.style.display = 'none';
             updateUI();
             
             document.getElementById('dropboxLink').focus();
