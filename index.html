@@ -27,7 +27,6 @@
             --gray-900: #111827;
             --radius: 10px;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -50,7 +49,7 @@
         }
 
         .header-content {
-            max-width: 1100px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 0 24px;
             display: flex;
@@ -88,7 +87,7 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 32px 24px;
         }
@@ -137,6 +136,12 @@
             margin-bottom: 8px;
         }
 
+        .label-hint {
+            font-weight: 400;
+            color: var(--gray-500);
+            font-size: 13px;
+        }
+
         input[type="text"],
         input[type="password"] {
             width: 100%;
@@ -156,36 +161,8 @@
             box-shadow: 0 0 0 3px rgba(0, 97, 254, 0.1);
         }
 
-        .input-with-button {
-            display: flex;
-            gap: 12px;
-        }
-
-        .input-with-button input { flex: 1; }
-
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        .checkbox-item span {
-            font-size: 14px;
-            color: var(--gray-700);
+        input::placeholder {
+            color: var(--gray-400);
         }
 
         .btn {
@@ -193,7 +170,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 15px;
             font-weight: 600;
             border-radius: 8px;
@@ -201,6 +178,7 @@
             transition: all 0.2s;
             border: none;
             font-family: inherit;
+            width: 100%;
         }
 
         .btn-primary {
@@ -211,17 +189,12 @@
         .btn-primary:hover { background: var(--primary-hover); }
         .btn-primary:disabled { background: var(--gray-300); cursor: not-allowed; }
 
-        .btn-secondary {
-            background: var(--gray-100);
-            color: var(--gray-700);
+        .btn-success {
+            background: var(--success);
+            color: white;
         }
 
-        .btn-secondary:hover { background: var(--gray-200); }
-
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 13px;
-        }
+        .btn-success:hover { background: #059669; }
 
         .status-bar {
             padding: 16px 24px;
@@ -246,144 +219,74 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .results-meta {
-            font-size: 14px;
-            color: var(--gray-500);
-        }
-
-        .results-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .chapter-list {
-            border: 1px solid var(--gray-200);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .chapter-item {
-            border-bottom: 1px solid var(--gray-100);
-        }
-
-        .chapter-item:last-child { border-bottom: none; }
-
-        .chapter-header {
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .chapter-header:hover { background: var(--gray-50); }
-
-        .chapter-info { flex: 1; min-width: 0; }
-
-        .chapter-title {
-            font-weight: 600;
-            font-size: 15px;
-            color: var(--gray-900);
-            margin-bottom: 4px;
-        }
-
-        .chapter-meta {
-            font-size: 13px;
-            color: var(--gray-500);
-        }
-
-        .chapter-toggle {
-            color: var(--gray-400);
-            transition: transform 0.2s;
-        }
-
-        .chapter-item.expanded .chapter-toggle {
-            transform: rotate(180deg);
-        }
-
-        .chapter-details {
-            display: none;
-            padding: 0 20px 20px 20px;
+        .result-info {
             background: var(--gray-50);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--gray-600);
         }
 
-        .chapter-item.expanded .chapter-details {
-            display: block;
+        .result-info strong {
+            color: var(--gray-800);
         }
 
-        .code-section {
-            margin-bottom: 16px;
+        .code-output {
+            background: var(--gray-900);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
         }
 
-        .code-section:last-child { margin-bottom: 0; }
+        .code-output pre {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            color: #e5e7eb;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin: 0;
+        }
 
-        .code-label {
+        .copy-success {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--success-bg);
+            color: #065f46;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .copy-success.show {
+            display: flex;
+        }
+
+        .preview-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .preview-label {
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: var(--gray-500);
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
-        .code-box-wrapper {
-            position: relative;
-        }
-
-        .code-box {
+        .preview-box {
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 16px;
             background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 6px;
-            padding: 12px;
-            padding-right: 70px;
-            font-family: 'Monaco', 'Consolas', monospace;
-            font-size: 12px;
-            color: var(--gray-700);
-            word-break: break-all;
-            white-space: pre-wrap;
-            max-height: 120px;
-            overflow-y: auto;
-        }
-
-        .code-box.url-only {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-height: none;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: white;
-            border: 1px solid var(--gray-300);
-            color: var(--gray-600);
-            padding: 6px 12px;
-            font-size: 11px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .copy-btn:hover { background: var(--gray-100); }
-
-        .copy-btn.copied {
-            background: var(--success-bg);
-            border-color: #a7f3d0;
-            color: #065f46;
         }
 
         .password-wrapper {
@@ -406,27 +309,52 @@
 
         .password-toggle:hover { color: var(--gray-600); }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 40px;
-            color: var(--gray-500);
+        /* Preview Accordion Styles */
+        .dtl-chapters { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .dtl-chapters-header {
+            background: #f8f9fa;
+            padding: 14px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            user-select: none;
         }
-
-        .empty-state h3 {
-            font-size: 18px;
-            color: var(--gray-700);
-            margin-bottom: 8px;
+        .dtl-chapters-header:hover { background: #f0f0f0; }
+        .dtl-chapters-arrow {
+            transition: transform 0.2s;
+            font-size: 12px;
+            color: #666;
         }
-
-        .section-divider {
-            margin: 16px 0;
-            border-top: 1px dashed var(--gray-300);
+        .dtl-chapters.open .dtl-chapters-arrow { transform: rotate(90deg); }
+        .dtl-chapters-citation {
+            font-weight: 600;
+            font-size: 15px;
+            color: #333;
         }
+        .dtl-chapters-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .dtl-chapters.open .dtl-chapters-list { max-height: 2000px; }
+        .dtl-chapters-list ul {
+            list-style: none;
+            padding: 12px 0 12px 28px;
+            margin: 0;
+        }
+        .dtl-chapters-list li { padding: 8px 0; }
+        .dtl-chapters-list a {
+            color: #0061fe;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .dtl-chapters-list a:hover { text-decoration: underline; }
 
         @media (max-width: 640px) {
             .header-content { flex-direction: column; gap: 12px; }
-            .input-with-button { flex-direction: column; }
-            .chapter-header { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -446,11 +374,10 @@
         <div class="card">
             <div class="card-header">
                 <span class="step">1</span>
-                <h2>Staff Authentication</h2>
+                <h2>Staff Password</h2>
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    <label for="password">Staff Password</label>
                     <div class="password-wrapper">
                         <input type="password" id="password" placeholder="Enter staff password">
                         <button type="button" class="password-toggle" onclick="togglePassword()">
@@ -464,50 +391,33 @@
             </div>
         </div>
 
-        <!-- Step 2: PDF Input -->
+        <!-- Step 2: Book Info -->
         <div class="card">
             <div class="card-header">
                 <span class="step">2</span>
-                <h2>Select PDF</h2>
+                <h2>Book Information</h2>
             </div>
             <div class="card-body">
                 <div class="form-group">
+                    <label for="citation">Citation <span class="label-hint">(First Last, Book Title)</span></label>
+                    <input type="text" id="citation" placeholder="John Smith, A History of Ancient Rome">
+                </div>
+                <div class="form-group">
                     <label for="dropboxUrl">Dropbox Link</label>
-                    <div class="input-with-button">
-                        <input type="text" id="dropboxUrl" placeholder="https://www.dropbox.com/...">
-                        <button class="btn btn-primary" onclick="analyzePDF()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                            Analyze
-                        </button>
-                    </div>
+                    <input type="text" id="dropboxUrl" placeholder="https://www.dropbox.com/...">
                 </div>
             </div>
         </div>
 
-        <!-- Step 3: Options -->
+        <!-- Generate Button -->
         <div class="card">
-            <div class="card-header">
-                <span class="step">3</span>
-                <h2>Output Options</h2>
-            </div>
             <div class="card-body">
-                <div class="checkbox-group">
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="allowDownload">
-                        <span>Allow download</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="includeChapterName" checked>
-                        <span>Include chapter name in token</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="enableAccordion">
-                        <span>Generate accordion embed code</span>
-                    </label>
-                </div>
+                <button class="btn btn-primary" onclick="analyzePDF()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                    </svg>
+                    Generate Code
+                </button>
             </div>
         </div>
 
@@ -515,12 +425,39 @@
         <div class="card" id="resultsCard" style="display: none;">
             <div class="card-header">
                 <span class="step">✓</span>
-                <h2>Generated Links</h2>
+                <h2>Ready to Copy</h2>
             </div>
             
             <div class="status-bar" id="statusBar" style="display: none;"></div>
             
-            <div class="card-body" id="resultsBody"></div>
+            <div class="card-body" id="resultsBody">
+                <div class="result-info" id="resultInfo"></div>
+                
+                <div class="code-output">
+                    <pre id="codeOutput"></pre>
+                </div>
+                
+                <button class="btn btn-success" onclick="copyCode()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy Code to Clipboard
+                </button>
+                
+                <div class="copy-success" id="copySuccess">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    Copied! Paste into LibGuides.
+                </div>
+                
+                <div class="preview-section">
+                    <div class="preview-label">Preview (how it will look)</div>
+                    <div class="preview-box" id="previewBox"></div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -538,10 +475,7 @@
         // =============================================================
         // STATE
         // =============================================================
-        let extractedChapters = [];
-        let signedTokens = [];
-        let currentDropboxUrl = '';
-        let pdfTotalPages = 0;
+        let generatedCode = '';
 
         // =============================================================
         // UI HELPERS
@@ -561,34 +495,37 @@
         function showStatus(message, type = 'loading') {
             const card = document.getElementById('resultsCard');
             const bar = document.getElementById('statusBar');
+            const body = document.getElementById('resultsBody');
             
             card.style.display = 'block';
             bar.style.display = 'flex';
             bar.className = 'status-bar ' + type;
+            body.style.display = type === 'loading' ? 'none' : 'block';
             
             if (type === 'loading') {
                 bar.innerHTML = '<div class="spinner"></div><span>' + message + '</span>';
             } else if (type === 'error') {
                 bar.innerHTML = '<span>❌</span><span>' + message + '</span>';
             } else if (type === 'success') {
-                bar.innerHTML = '<span>✅</span><span>' + message + '</span>';
-                setTimeout(() => { bar.style.display = 'none'; }, 3000);
+                bar.style.display = 'none';
             }
         }
 
-        function hideStatus() {
-            document.getElementById('statusBar').style.display = 'none';
-        }
-
         // =============================================================
-        // MAIN ANALYSIS FUNCTION
+        // MAIN FUNCTION
         // =============================================================
         async function analyzePDF() {
             const password = document.getElementById('password').value;
+            const citation = document.getElementById('citation').value.trim();
             const dropboxUrl = document.getElementById('dropboxUrl').value.trim();
             
             if (!password) {
                 showStatus('Please enter the staff password', 'error');
+                return;
+            }
+            
+            if (!citation) {
+                showStatus('Please enter the book citation', 'error');
                 return;
             }
             
@@ -602,10 +539,10 @@
                 return;
             }
 
-            currentDropboxUrl = dropboxUrl;
             showStatus('Loading PDF and extracting chapters...');
             
             try {
+                // Get temp token to load PDF
                 const tempResponse = await fetch(WORKER_URL + '/sign?' + new URLSearchParams({
                     password: password,
                     dropbox: dropboxUrl,
@@ -621,29 +558,54 @@
                     return;
                 }
                 
+                // Load PDF
                 const proxyUrl = WORKER_URL + '?token=' + tempData.token;
                 const pdf = await pdfjsLib.getDocument({ url: proxyUrl }).promise;
-                pdfTotalPages = pdf.numPages;
+                const totalPages = pdf.numPages;
                 
+                // Get bookmarks
                 const outline = await pdf.getOutline();
                 
                 if (!outline || outline.length === 0) {
-                    showNoBookmarks();
+                    showStatus('No bookmarks found in this PDF. Add bookmarks first.', 'error');
                     return;
                 }
                 
-                extractedChapters = await extractChapters(pdf, outline);
+                // Extract chapters
+                const chapters = await extractChapters(pdf, outline, totalPages);
                 
-                if (extractedChapters.length === 0) {
-                    showNoBookmarks();
+                if (chapters.length === 0) {
+                    showStatus('Could not extract chapter information from bookmarks.', 'error');
                     return;
                 }
                 
+                // Sign all chapters
                 showStatus('Generating secure links...');
-                await signAllChapters(password);
                 
-                displayResults();
-                showStatus('Generated ' + extractedChapters.length + ' chapter links', 'success');
+                const signResponse = await fetch(WORKER_URL + '/batch-sign', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        password,
+                        dropbox: dropboxUrl,
+                        chapters: chapters.map(ch => ({
+                            title: ch.title,
+                            start: ch.start,
+                            end: ch.end
+                        })),
+                        download: false,
+                        expires: 0
+                    })
+                });
+                
+                const signData = await signResponse.json();
+                
+                if (signData.error) {
+                    throw new Error(signData.error);
+                }
+                
+                // Generate the final code
+                generateOutput(citation, chapters, signData.tokens, totalPages);
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -651,10 +613,7 @@
             }
         }
 
-        // =============================================================
-        // EXTRACT CHAPTERS
-        // =============================================================
-        async function extractChapters(pdf, outline) {
+        async function extractChapters(pdf, outline, totalPages) {
             const chapters = [];
             
             for (let i = 0; i < outline.length; i++) {
@@ -668,9 +627,9 @@
                     let endPage;
                     if (nextItem) {
                         const nextStart = await getPageNumber(pdf, nextItem);
-                        endPage = nextStart !== null ? nextStart - 1 : pdfTotalPages;
+                        endPage = nextStart !== null ? nextStart - 1 : totalPages;
                     } else {
-                        endPage = pdfTotalPages;
+                        endPage = totalPages;
                     }
                     
                     if (endPage < startPage) endPage = startPage;
@@ -678,11 +637,10 @@
                     chapters.push({
                         title: item.title.trim(),
                         start: startPage,
-                        end: endPage,
-                        pageCount: endPage - startPage + 1
+                        end: endPage
                     });
                 } catch (e) {
-                    console.warn('Could not process: ' + item.title, e);
+                    console.warn('Could not process bookmark:', e);
                 }
             }
             
@@ -701,219 +659,70 @@
             }
         }
 
-        // =============================================================
-        // SIGN CHAPTERS VIA WORKER
-        // =============================================================
-        async function signAllChapters(password) {
-            const includeChapterName = document.getElementById('includeChapterName').checked;
-            const allowDownload = document.getElementById('allowDownload').checked;
-            
-            const chapters = extractedChapters.map(ch => ({
-                title: includeChapterName ? ch.title : '',
-                start: ch.start,
-                end: ch.end
-            }));
-            
-            const response = await fetch(WORKER_URL + '/batch-sign', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    password,
-                    dropbox: currentDropboxUrl,
-                    chapters,
-                    download: allowDownload,
-                    expires: 0
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (data.error) {
-                throw new Error(data.error);
-            }
-            
-            signedTokens = data.tokens;
-        }
-
-        // =============================================================
-        // DISPLAY RESULTS
-        // =============================================================
-        function displayResults() {
-            const body = document.getElementById('resultsBody');
-            const showAccordion = document.getElementById('enableAccordion').checked;
-            
-            let html = '<div class="results-header">' +
-                '<div class="results-meta">' + extractedChapters.length + ' chapters · ' + pdfTotalPages + ' total pages</div>' +
-                '<div class="results-actions">' +
-                    '<button class="btn btn-secondary btn-sm" onclick="copyAllUrls()">' +
-                        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>' +
-                        'Copy All URLs' +
-                    '</button>' +
-                    '<button class="btn btn-secondary btn-sm" onclick="exportCSV()">' +
-                        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' +
-                        'Export CSV' +
-                    '</button>' +
-                '</div>' +
-            '</div>' +
-            '<div class="chapter-list">';
-            
-            extractedChapters.forEach((chapter, i) => {
-                html += '<div class="chapter-item" id="chapter-' + i + '">' +
-                    '<div class="chapter-header" onclick="toggleChapter(' + i + ')">' +
-                        '<div class="chapter-info">' +
-                            '<div class="chapter-title">' + escapeHtml(chapter.title) + '</div>' +
-                            '<div class="chapter-meta">Pages ' + chapter.start + '–' + chapter.end + ' · ' + chapter.pageCount + ' pages</div>' +
-                        '</div>' +
-                        '<div class="chapter-toggle">' +
-                            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="chapter-details">' +
-                        generateCodeSections(i, chapter, showAccordion) +
-                    '</div>' +
-                '</div>';
-            });
-            
-            html += '</div>';
-            body.innerHTML = html;
-        }
-
-        function generateCodeSections(index, chapter, showAccordion) {
-            const url = getChapterUrl(index);
-            const buttonText = 'Open Chapter';
-            
-            // Standard embed code
-            const embedCode = '<!-- ' + chapter.title + ' (Pages ' + chapter.start + '-' + chapter.end + ') -->\n' +
-'<div style="text-align: right; margin-bottom: 8px;">\n' +
-'    <a href="' + url + '" target="_blank" rel="noopener" style="text-decoration: none; color: #333; font-family: sans-serif; font-size: 0.9em; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; background-color: #f9f9f9;">\n' +
-'        <span style="font-size: 1.1em; margin-right: 4px;">&#x2197;</span> ' + buttonText + '\n' +
-'    </a>\n' +
-'</div>\n' +
-'<iframe src="' + url + '" width="100%" height="700" style="border: 1px solid #ccc; border-radius: 4px;" referrerpolicy="origin" allowfullscreen></iframe>';
-
-            // Accordion code
-            const accordionCode = '<style>\n' +
-'.dtl_book_accordion { margin-bottom: 0 !important; border: none !important; border-radius: 6px; overflow: hidden; box-shadow: none !important; }\n' +
-'.dtl_book_header { background-color: #f9f9f9; padding: 18px; cursor: pointer; display: flex !important; align-items: center !important; gap: 14px !important; font-family: sans-serif; transition: background-color 0.2s; }\n' +
-'.dtl_book_header:hover { background-color: #f0f0f0; }\n' +
-'.dtl_citation { flex: 0 1 auto; font-size: clamp(11px, 1.2vw, 15px) !important; font-weight: 800 !important; }\n' +
-'.dtl_toggle_text { flex: 0 0 auto; font-size: 1rem !important; font-weight: 800 !important; color: #666; padding: 6px 14px; border-radius: 999px; background: #fff; white-space: nowrap; }\n' +
-'.dtl_book_header:hover .dtl_toggle_text { background: #eee; }\n' +
-'.dtl_book_content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }\n' +
-'.dtl_book_accordion.dtl_open .dtl_book_content { max-height: 2000px; }\n' +
-'.dtl_book_content_inner { padding: 0; background: transparent; margin: 0; }\n' +
-'.dtl_book_accordion.dtl_open .dtl_book_content_inner { padding: 12px; background: #fff; }\n' +
-'.dtl_fullscreen_link { text-align: right; margin-bottom: 8px; }\n' +
-'.dtl_fullscreen_link a { text-decoration: none; color: #333; font-family: sans-serif; font-size: 0.9em; padding: 5px 10px; border-radius: 4px; background-color: #f9f9f9; }\n' +
-'.dtl_fullscreen_link a:hover { background-color: #eee; }\n' +
-'</style>\n\n' +
-'<div class="dtl_book_accordion">\n' +
-'  <div class="dtl_book_header" tabindex="0" onclick="(function(el){var a=el.parentElement,t=el.querySelector(\'.dtl_toggle_text\');a.classList.toggle(\'dtl_open\');t.textContent=a.classList.contains(\'dtl_open\')?\'Collapse\':\'Click to See Preview\';})(this)" onkeydown="if(event.key===\'Enter\'){this.click()}">\n' +
-'    <div class="dtl_citation">' + escapeHtml(chapter.title) + '</div>\n' +
-'    <span class="dtl_toggle_text">Click to See Preview</span>\n' +
-'  </div>\n' +
-'  <div class="dtl_book_content">\n' +
-'    <div class="dtl_book_content_inner">\n' +
-'      <div class="dtl_fullscreen_link">\n' +
-'        <a href="' + url + '" target="_blank" rel="noopener"><span style="margin-right: 4px;">↗</span> ' + buttonText + '</a>\n' +
-'      </div>\n' +
-'      <iframe src="' + url + '" width="100%" height="700" style="border: none !important; border-radius: 4px;" referrerpolicy="origin" allowfullscreen></iframe>\n' +
-'    </div>\n' +
-'  </div>\n' +
-'</div>';
-
-            let html = '<div class="code-section">' +
-                '<div class="code-label">Direct URL</div>' +
-                '<div class="code-box-wrapper">' +
-                    '<div class="code-box url-only" id="url-' + index + '">' + url + '</div>' +
-                    '<button class="copy-btn" onclick="copyCode(\'url-' + index + '\', this)">Copy</button>' +
-                '</div>' +
-            '</div>' +
-            
-            '<div class="code-section">' +
-                '<div class="code-label">Standard Embed Code</div>' +
-                '<div class="code-box-wrapper">' +
-                    '<div class="code-box" id="embed-' + index + '">' + escapeHtml(embedCode) + '</div>' +
-                    '<button class="copy-btn" onclick="copyCode(\'embed-' + index + '\', this)">Copy</button>' +
-                '</div>' +
-            '</div>';
-            
-            if (showAccordion) {
-                html += '<div class="section-divider"></div>' +
-                '<div class="code-section">' +
-                    '<div class="code-label">Accordion Embed Code</div>' +
-                    '<div class="code-box-wrapper">' +
-                        '<div class="code-box" id="accordion-' + index + '">' + escapeHtml(accordionCode) + '</div>' +
-                        '<button class="copy-btn" onclick="copyCode(\'accordion-' + index + '\', this)">Copy</button>' +
-                    '</div>' +
-                '</div>';
-            }
-            
-            return html;
-        }
-
-        function toggleChapter(index) {
-            const item = document.getElementById('chapter-' + index);
-            item.classList.toggle('expanded');
-        }
-
-        function showNoBookmarks() {
-            const body = document.getElementById('resultsBody');
-            body.innerHTML = '<div class="empty-state">' +
-                '<h3>No Chapter Bookmarks Found</h3>' +
-                '<p>This PDF doesn\'t have top-level bookmarks. Add bookmarks to the PDF first.</p>' +
-            '</div>';
-            hideStatus();
-        }
-
-        // =============================================================
-        // COPY / EXPORT FUNCTIONS
-        // =============================================================
-        function getChapterUrl(index) {
-            const token = signedTokens[index].token;
+        function getChapterUrl(token) {
             const workerUrl = WORKER_URL + '?token=' + encodeURIComponent(token);
             return VIEWER_URL + '?file=' + encodeURIComponent(workerUrl);
         }
 
-        function copyCode(elementId, btn) {
-            const el = document.getElementById(elementId);
-            const text = el.textContent;
+        function generateOutput(citation, chapters, tokens, totalPages) {
+            // Build chapter links HTML
+            let linksHtml = '';
+            chapters.forEach((ch, i) => {
+                const url = getChapterUrl(tokens[i].token);
+                linksHtml += '      <li><a href="' + url + '" target="_blank" rel="noopener">' + escapeHtml(ch.title) + '</a></li>\n';
+            });
+
+            // Generate the complete self-contained code
+            generatedCode = `<!-- ${escapeHtml(citation)} - Chapter Links -->
+<style>
+.dtl-chapters { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+.dtl-chapters-header { background: #f8f9fa; padding: 14px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px; border-radius: 6px; transition: background 0.2s; user-select: none; }
+.dtl-chapters-header:hover { background: #f0f0f0; }
+.dtl-chapters-arrow { transition: transform 0.2s; font-size: 12px; color: #666; }
+.dtl-chapters.open .dtl-chapters-arrow { transform: rotate(90deg); }
+.dtl-chapters-citation { font-weight: 600; font-size: 15px; color: #333; }
+.dtl-chapters-list { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+.dtl-chapters.open .dtl-chapters-list { max-height: 2000px; }
+.dtl-chapters-list ul { list-style: none; padding: 12px 0 12px 28px; margin: 0; }
+.dtl-chapters-list li { padding: 8px 0; }
+.dtl-chapters-list a { color: #0061fe; text-decoration: none; font-size: 14px; }
+.dtl-chapters-list a:hover { text-decoration: underline; }
+</style>
+
+<div class="dtl-chapters">
+  <div class="dtl-chapters-header" onclick="this.parentElement.classList.toggle('open')" tabindex="0" onkeydown="if(event.key==='Enter')this.click()">
+    <span class="dtl-chapters-arrow">▶</span>
+    <span class="dtl-chapters-citation">${escapeHtml(citation)}</span>
+  </div>
+  <div class="dtl-chapters-list">
+    <ul>
+${linksHtml}    </ul>
+  </div>
+</div>`;
+
+            // Update result info
+            document.getElementById('resultInfo').innerHTML = 
+                '<strong>' + chapters.length + ' chapters</strong> from a ' + totalPages + '-page PDF';
             
-            navigator.clipboard.writeText(text).then(() => {
-                btn.textContent = 'Copied!';
-                btn.classList.add('copied');
+            // Show code
+            document.getElementById('codeOutput').textContent = generatedCode;
+            
+            // Show preview
+            document.getElementById('previewBox').innerHTML = generatedCode;
+            
+            // Show results
+            showStatus('', 'success');
+            document.getElementById('resultsBody').style.display = 'block';
+            document.getElementById('copySuccess').classList.remove('show');
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(generatedCode).then(() => {
+                document.getElementById('copySuccess').classList.add('show');
                 setTimeout(() => {
-                    btn.textContent = 'Copy';
-                    btn.classList.remove('copied');
-                }, 2000);
+                    document.getElementById('copySuccess').classList.remove('show');
+                }, 3000);
             });
-        }
-
-        function copyAllUrls() {
-            const lines = extractedChapters.map((ch, i) => 
-                ch.title + '\n' + getChapterUrl(i)
-            ).join('\n\n');
-            
-            navigator.clipboard.writeText(lines).then(() => {
-                showStatus('All URLs copied to clipboard!', 'success');
-            });
-        }
-
-        function exportCSV() {
-            let csv = 'Chapter Title,Start Page,End Page,Page Count,URL\n';
-            
-            extractedChapters.forEach((ch, i) => {
-                const url = getChapterUrl(i);
-                csv += '"' + ch.title.replace(/"/g, '""') + '",' + ch.start + ',' + ch.end + ',' + ch.pageCount + ',"' + url + '"\n';
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'chapter-links.csv';
-            a.click();
-            URL.revokeObjectURL(url);
         }
 
         function escapeHtml(text) {
@@ -927,8 +736,12 @@
             if (e.key === 'Enter') analyzePDF();
         });
         
-        document.getElementById('password').addEventListener('keypress', e => {
+        document.getElementById('citation').addEventListener('keypress', e => {
             if (e.key === 'Enter') document.getElementById('dropboxUrl').focus();
+        });
+        
+        document.getElementById('password').addEventListener('keypress', e => {
+            if (e.key === 'Enter') document.getElementById('citation').focus();
         });
     </script>
 </body>
