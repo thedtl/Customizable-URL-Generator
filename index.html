@@ -3,736 +3,933 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Link Tool</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>Chapter Link Generator | DTL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- Base Styles --- */
+        :root {
+            --primary: #0061fe;
+            --primary-hover: #004bb5;
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --error: #ef4444;
+            --error-bg: #fee2e2;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --radius: 10px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            color: #333;
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--gray-900);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .staff-badge {
+            background: var(--warning-bg);
+            color: #92400e;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 24px;
         }
 
         .card {
             background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            max-width: 700px;
-            text-align: center;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            overflow: hidden;
         }
 
-        h1 { margin-top: 0; font-size: 24px; color: #111; }
-        p { color: #666; margin-bottom: 25px; }
-
-        /* --- Inputs & Main Button --- */
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 14px;
-            font-size: 16px;
-            border: 2px solid #e1e1e1;
-            border-radius: 8px;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-            outline: none;
-            margin-bottom: 15px;
-            font-family: 'Inter', sans-serif;
-        }
-        input[type="text"]:focus, textarea:focus { border-color: #0061fe; }
-
-        textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
-
-        .input-hint {
-            font-size: 12px;
-            color: #888;
-            text-align: left;
-            margin-top: -10px;
-            margin-bottom: 15px;
-        }
-
-        .input-error {
-            font-size: 12px;
-            color: #dc3545;
-            text-align: left;
-            margin-top: -10px;
-            margin-bottom: 15px;
-            display: none;
-        }
-
-        /* --- Restriction Controls --- */
-        .restriction-panel {
-            background: #f8f9fa;
-            border: 2px solid #e1e1e1;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .restriction-panel h3 {
-            margin: 0 0 15px 0;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #666;
-        }
-
-        .restriction-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        .restriction-row:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Checkbox styles */
-        .checkbox-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .checkbox-row input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: #0061fe;
-        }
-
-        .checkbox-row input[type="checkbox"]:disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .checkbox-row label {
-            font-size: 14px;
-            color: #333;
-            cursor: pointer;
-            margin: 0;
-            user-select: none;
-        }
-
-        .checkbox-row.disabled label {
-            color: #999;
-            cursor: not-allowed;
-        }
-
-        .checkbox-hint {
-            font-size: 11px;
-            color: #999;
-            margin-left: 4px;
-            font-style: italic;
-        }
-
-        /* Slider row */
-        .slider-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-left: 28px;
-            margin-bottom: 15px;
-        }
-
-        .slider-row.disabled {
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        .slider-row label {
-            font-size: 14px;
-            color: #333;
-            margin: 0;
-            min-width: 100px;
-        }
-
-        .slider-container {
-            flex: 1;
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-100);
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        input[type="range"] {
-            flex: 1;
-            height: 6px;
-            border-radius: 3px;
-            background: #ddd;
-            outline: none;
-            -webkit-appearance: none;
-        }
+        .card-header h2 { font-size: 16px; font-weight: 600; }
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #0061fe;
-            cursor: pointer;
-            border: 2px solid white;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #0061fe;
-            cursor: pointer;
-            border: 2px solid white;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
-        .slider-value {
-            background: #0061fe;
+        .card-header .step {
+            background: var(--primary);
             color: white;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 600;
-            min-width: 45px;
-            text-align: center;
-        }
-
-        /* Access mode indicator */
-        .access-mode {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
-        .access-mode.preview {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .access-mode.view-only {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .access-mode.full {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .button-row {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
             display: flex;
-            gap: 10px;
-        }
-
-        .generate-btn {
-            flex: 1;
-            padding: 14px;
-            font-size: 16px;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
             font-weight: 600;
-            cursor: pointer;
-            background: #0061fe;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            transition: background 0.2s, transform 0.1s;
-        }
-        .generate-btn:hover { background: #004bb5; }
-        .generate-btn:active { transform: scale(0.98); }
-
-        .clear-btn {
-            padding: 14px 20px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            background: #f8f9fa;
-            color: #666;
-            border: 2px solid #e1e1e1;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-        .clear-btn:hover {
-            background: #e9ecef;
-            border-color: #ccc;
         }
 
-        /* --- Results Section --- */
-        #results {
-            margin-top: 30px;
-            text-align: left;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-            animation: fadeIn 0.5s ease;
-        }
+        .card-body { padding: 24px; }
 
-        .results-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #888;
-            font-weight: 600;
-            margin-top: 20px;
+        .form-group { margin-bottom: 20px; }
+        .form-group:last-child { margin-bottom: 0; }
+
+        label {
             display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-700);
             margin-bottom: 8px;
         }
 
-        .results-label:first-of-type {
-            margin-top: 0;
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: white;
         }
 
-        .result-wrapper {
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 97, 254, 0.1);
+        }
+
+        .input-with-button {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-with-button input { flex: 1; }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .checkbox-item span {
+            font-size: 14px;
+            color: var(--gray-700);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:disabled { background: var(--gray-300); cursor: not-allowed; }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover { background: var(--gray-200); }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .status-bar {
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .status-bar.loading { background: var(--gray-50); color: var(--gray-600); }
+        .status-bar.success { background: var(--success-bg); color: #065f46; }
+        .status-bar.error { background: var(--error-bg); color: #991b1b; }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .results-meta {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chapter-list {
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .chapter-item {
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .chapter-item:last-child { border-bottom: none; }
+
+        .chapter-header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .chapter-header:hover { background: var(--gray-50); }
+
+        .chapter-info { flex: 1; min-width: 0; }
+
+        .chapter-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .chapter-meta {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        .chapter-toggle {
+            color: var(--gray-400);
+            transition: transform 0.2s;
+        }
+
+        .chapter-item.expanded .chapter-toggle {
+            transform: rotate(180deg);
+        }
+
+        .chapter-details {
+            display: none;
+            padding: 0 20px 20px 20px;
+            background: var(--gray-50);
+        }
+
+        .chapter-item.expanded .chapter-details {
+            display: block;
+        }
+
+        .code-section {
+            margin-bottom: 16px;
+        }
+
+        .code-section:last-child { margin-bottom: 0; }
+
+        .code-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+        }
+
+        .code-box-wrapper {
             position: relative;
         }
 
         .code-box {
-            background: #f8f9fa;
-            padding: 15px;
-            padding-right: 80px;
-            border: 1px solid #e1e1e1;
+            background: white;
+            border: 1px solid var(--gray-200);
             border-radius: 6px;
+            padding: 12px;
+            padding-right: 70px;
             font-family: 'Monaco', 'Consolas', monospace;
-            font-size: 13px;
-            color: #444;
+            font-size: 12px;
+            color: var(--gray-700);
             word-break: break-all;
-            min-height: 20px;
-            max-height: 150px;
-            overflow-y: auto;
             white-space: pre-wrap;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .code-box.url-only {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: none;
         }
 
         .copy-btn {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 8px;
+            right: 8px;
             background: white;
-            border: 1px solid #ccc;
-            color: #333;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-600);
             padding: 6px 12px;
-            font-size: 12px;
+            font-size: 11px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.2s;
         }
-        .copy-btn:hover {
-            background: #eee;
+
+        .copy-btn:hover { background: var(--gray-100); }
+
+        .copy-btn.copied {
+            background: var(--success-bg);
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input { padding-right: 50px; }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .password-toggle:hover { color: var(--gray-600); }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--gray-500);
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: var(--gray-700);
+            margin-bottom: 8px;
         }
 
         .section-divider {
-            margin: 25px 0;
-            border-top: 2px dashed #ddd;
-            position: relative;
-        }
-        .section-divider span {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            padding: 0 12px;
-            font-size: 11px;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin: 16px 0;
+            border-top: 1px dashed var(--gray-300);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @media (max-width: 640px) {
+            .header-content { flex-direction: column; gap: 12px; }
+            .input-with-button { flex-direction: column; }
+            .chapter-header { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
 <body>
-
-    <div class="card">
-        <h1>LibGuide PDF Generator</h1>
-        <p>Paste your Dropbox link and configure access restrictions.</p>
-
-        <input type="text" id="dropboxLink" placeholder="https://www.dropbox.com/..." autofocus>
-        <div class="input-error" id="linkError">Please enter a valid Dropbox link.</div>
-
-        <!-- Restriction Controls -->
-        <div class="restriction-panel">
-            <h3>Access Restrictions</h3>
-            
-            <div class="checkbox-row">
-                <input type="checkbox" id="noLimitCheckbox">
-                <label for="noLimitCheckbox">No viewing limits (full document)</label>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">📚</div>
+                <span>Chapter Link Generator</span>
             </div>
-            
-            <div class="slider-row" id="sliderRow">
-                <label for="limitSlider">Preview limit:</label>
-                <div class="slider-container">
-                    <input type="range" id="limitSlider" min="5" max="95" step="5" value="20">
-                    <span class="slider-value" id="limitValue">20%</span>
+            <div class="staff-badge">🔒 Staff Tool</div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Step 1: Authentication -->
+        <div class="card">
+            <div class="card-header">
+                <span class="step">1</span>
+                <h2>Staff Authentication</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="password">Staff Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" placeholder="Enter staff password">
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
-            
-            <div class="checkbox-row" id="downloadRow">
-                <input type="checkbox" id="downloadCheckbox" disabled>
-                <label for="downloadCheckbox">Allow download</label>
-                <span class="checkbox-hint">(only available if no viewing limits is selected)</span>
-            </div>
-            
-            <div style="text-align: center;">
-                <span class="access-mode preview" id="accessMode">Preview Mode (20%)</span>
-            </div>
         </div>
 
-        <!-- Collapsible Mode -->
-        <div class="restriction-panel">
-            <div class="checkbox-row">
-                <input type="checkbox" id="collapsibleCheckbox">
-                <label for="collapsibleCheckbox">Enable collapsible accordion style</label>
+        <!-- Step 2: PDF Input -->
+        <div class="card">
+            <div class="card-header">
+                <span class="step">2</span>
+                <h2>Select PDF</h2>
             </div>
-            
-            <div id="citationRow" style="display: none; margin-top: 15px;">
-                <textarea id="citation" placeholder="Author, Book Title" style="margin-bottom: 0;"></textarea>
-            </div>
-        </div>
-
-        <div class="button-row">
-            <button class="generate-btn" onclick="generateLink()">Generate Code</button>
-            <button class="clear-btn" onclick="clearForm()">Clear</button>
-        </div>
-
-        <div id="results" style="display:none;">
-
-            <span class="results-label">Master Link</span>
-            <div class="result-wrapper">
-                <div class="code-box" id="finalLink"></div>
-                <button class="copy-btn" onclick="copyToClipboard('finalLink', this)">Copy</button>
-            </div>
-
-            <span class="results-label">Standard Embed Code</span>
-            <div class="result-wrapper">
-                <div class="code-box" id="embedCode"></div>
-                <button class="copy-btn" onclick="copyToClipboard('embedCode', this)">Copy</button>
-            </div>
-
-            <div class="section-divider" id="accordionDivider"><span>Accordion Style</span></div>
-
-            <div id="accordionSection">
-                <span class="results-label">Accordion Code (Self-contained)</span>
-                <div class="result-wrapper">
-                    <div class="code-box" id="accordionCode"></div>
-                    <button class="copy-btn" onclick="copyToClipboard('accordionCode', this)">Copy</button>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="dropboxUrl">Dropbox Link</label>
+                    <div class="input-with-button">
+                        <input type="text" id="dropboxUrl" placeholder="https://www.dropbox.com/...">
+                        <button class="btn btn-primary" onclick="analyzePDF()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            Analyze
+                        </button>
+                    </div>
                 </div>
             </div>
-
         </div>
-    </div>
 
+        <!-- Step 3: Options -->
+        <div class="card">
+            <div class="card-header">
+                <span class="step">3</span>
+                <h2>Output Options</h2>
+            </div>
+            <div class="card-body">
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="allowDownload">
+                        <span>Allow download</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="includeChapterName" checked>
+                        <span>Include chapter name in token</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="enableAccordion">
+                        <span>Generate accordion embed code</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="card" id="resultsCard" style="display: none;">
+            <div class="card-header">
+                <span class="step">✓</span>
+                <h2>Generated Links</h2>
+            </div>
+            
+            <div class="status-bar" id="statusBar" style="display: none;"></div>
+            
+            <div class="card-body" id="resultsBody"></div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
     <script>
-        // --- YOUR SETTINGS ---
-        const VIEWER_URL = "https://thedtl.github.io/Customizable-Reader/web/viewer.html";
-        const WORKER_URL = "https://restricteddropboxguard.ccrawford.workers.dev/";
-        // ---------------------
+        // =============================================================
+        // CONFIGURATION
+        // =============================================================
+        const VIEWER_URL = "https://thedtl.github.io/chapter-pdf-reader/web/viewer.html";
+        const WORKER_URL = "https://dtl-secure-worker.ccrawford.workers.dev";
 
-        // --- UI State Management ---
-        const limitSlider = document.getElementById('limitSlider');
-        const limitValue = document.getElementById('limitValue');
-        const noLimitCheckbox = document.getElementById('noLimitCheckbox');
-        const downloadCheckbox = document.getElementById('downloadCheckbox');
-        const downloadRow = document.getElementById('downloadRow');
-        const sliderRow = document.getElementById('sliderRow');
-        const accessMode = document.getElementById('accessMode');
-        const collapsibleCheckbox = document.getElementById('collapsibleCheckbox');
-        const citationRow = document.getElementById('citationRow');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // Toggle citation field visibility
-        collapsibleCheckbox.addEventListener('change', function() {
-            citationRow.style.display = this.checked ? 'block' : 'none';
-        });
+        // =============================================================
+        // STATE
+        // =============================================================
+        let extractedChapters = [];
+        let signedTokens = [];
+        let currentDropboxUrl = '';
+        let pdfTotalPages = 0;
 
-        function updateUI() {
-            const noLimit = noLimitCheckbox.checked;
-            const limit = noLimit ? 100 : parseInt(limitSlider.value);
-            const downloadEnabled = downloadCheckbox.checked;
-
-            // Grey out slider when no limit is checked
-            if (noLimit) {
-                sliderRow.classList.add('disabled');
+        // =============================================================
+        // UI HELPERS
+        // =============================================================
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
             } else {
-                sliderRow.classList.remove('disabled');
-            }
-
-            // Enable/disable download checkbox based on no limit selection
-            if (noLimit) {
-                downloadCheckbox.disabled = false;
-                downloadRow.classList.remove('disabled');
-            } else {
-                downloadCheckbox.disabled = true;
-                downloadCheckbox.checked = false;
-                downloadRow.classList.add('disabled');
-            }
-
-            // Update slider display
-            limitValue.textContent = limitSlider.value + '%';
-
-            // Update access mode badge
-            if (!noLimit) {
-                accessMode.textContent = `Preview Mode (${limitSlider.value}%)`;
-                accessMode.className = 'access-mode preview';
-            } else if (!downloadCheckbox.checked) {
-                accessMode.textContent = 'View Only (No Download)';
-                accessMode.className = 'access-mode view-only';
-            } else {
-                accessMode.textContent = 'Full Access';
-                accessMode.className = 'access-mode full';
+                input.type = 'password';
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
             }
         }
 
-        limitSlider.addEventListener('input', updateUI);
-        noLimitCheckbox.addEventListener('change', updateUI);
-        downloadCheckbox.addEventListener('change', updateUI);
-
-        // Initialize UI
-        updateUI();
-
-        // --- Generate Link ---
-        function generateLink() {
-            const input = document.getElementById('dropboxLink').value.trim();
-            const errorEl = document.getElementById('linkError');
-            const isCollapsible = collapsibleCheckbox.checked;
-            const citation = isCollapsible ? (document.getElementById('citation').value.trim() || 'Document Title') : '';
+        function showStatus(message, type = 'loading') {
+            const card = document.getElementById('resultsCard');
+            const bar = document.getElementById('statusBar');
             
-            const noLimit = noLimitCheckbox.checked;
-            const limit = noLimit ? 100 : parseInt(limitSlider.value);
-            const allowDownload = noLimit && downloadCheckbox.checked;
+            card.style.display = 'block';
+            bar.style.display = 'flex';
+            bar.className = 'status-bar ' + type;
+            
+            if (type === 'loading') {
+                bar.innerHTML = '<div class="spinner"></div><span>' + message + '</span>';
+            } else if (type === 'error') {
+                bar.innerHTML = '<span>❌</span><span>' + message + '</span>';
+            } else if (type === 'success') {
+                bar.innerHTML = '<span>✅</span><span>' + message + '</span>';
+                setTimeout(() => { bar.style.display = 'none'; }, 3000);
+            }
+        }
 
-            // Reset error state
-            errorEl.style.display = 'none';
+        function hideStatus() {
+            document.getElementById('statusBar').style.display = 'none';
+        }
 
-            if (!input) {
-                errorEl.textContent = "Please paste a link first!";
-                errorEl.style.display = 'block';
+        // =============================================================
+        // MAIN ANALYSIS FUNCTION
+        // =============================================================
+        async function analyzePDF() {
+            const password = document.getElementById('password').value;
+            const dropboxUrl = document.getElementById('dropboxUrl').value.trim();
+            
+            if (!password) {
+                showStatus('Please enter the staff password', 'error');
+                return;
+            }
+            
+            if (!dropboxUrl) {
+                showStatus('Please enter a Dropbox URL', 'error');
                 return;
             }
 
-            // Validate it's a Dropbox link
-            if (!input.includes('dropbox.com/')) {
-                errorEl.textContent = "This doesn't look like a Dropbox link.";
-                errorEl.style.display = 'block';
+            if (!dropboxUrl.includes('dropbox.com')) {
+                showStatus('This doesn\'t look like a Dropbox URL', 'error');
                 return;
             }
 
-            let base64Link;
+            currentDropboxUrl = dropboxUrl;
+            showStatus('Loading PDF and extracting chapters...');
+            
             try {
-                base64Link = btoa(encodeURIComponent(input).replace(/%([0-9A-F]{2})/g,
-                    function toSolidBytes(match, p1) {
-                        return String.fromCharCode('0x' + p1);
+                const tempResponse = await fetch(WORKER_URL + '/sign?' + new URLSearchParams({
+                    password: password,
+                    dropbox: dropboxUrl,
+                    start: '1',
+                    end: '99999',
+                    expires: '0'
                 }));
+                
+                const tempData = await tempResponse.json();
+                
+                if (tempData.error) {
+                    showStatus(tempData.error === 'Invalid password' ? 'Incorrect password' : tempData.error, 'error');
+                    return;
+                }
+                
+                const proxyUrl = WORKER_URL + '?token=' + tempData.token;
+                const pdf = await pdfjsLib.getDocument({ url: proxyUrl }).promise;
+                pdfTotalPages = pdf.numPages;
+                
+                const outline = await pdf.getOutline();
+                
+                if (!outline || outline.length === 0) {
+                    showNoBookmarks();
+                    return;
+                }
+                
+                extractedChapters = await extractChapters(pdf, outline);
+                
+                if (extractedChapters.length === 0) {
+                    showNoBookmarks();
+                    return;
+                }
+                
+                showStatus('Generating secure links...');
+                await signAllChapters(password);
+                
+                displayResults();
+                showStatus('Generated ' + extractedChapters.length + ' chapter links', 'success');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+
+        // =============================================================
+        // EXTRACT CHAPTERS
+        // =============================================================
+        async function extractChapters(pdf, outline) {
+            const chapters = [];
+            
+            for (let i = 0; i < outline.length; i++) {
+                const item = outline[i];
+                const nextItem = outline[i + 1];
+                
+                try {
+                    let startPage = await getPageNumber(pdf, item);
+                    if (startPage === null) continue;
+                    
+                    let endPage;
+                    if (nextItem) {
+                        const nextStart = await getPageNumber(pdf, nextItem);
+                        endPage = nextStart !== null ? nextStart - 1 : pdfTotalPages;
+                    } else {
+                        endPage = pdfTotalPages;
+                    }
+                    
+                    if (endPage < startPage) endPage = startPage;
+                    
+                    chapters.push({
+                        title: item.title.trim(),
+                        start: startPage,
+                        end: endPage,
+                        pageCount: endPage - startPage + 1
+                    });
+                } catch (e) {
+                    console.warn('Could not process: ' + item.title, e);
+                }
+            }
+            
+            return chapters;
+        }
+
+        async function getPageNumber(pdf, item) {
+            try {
+                let dest = item.dest;
+                if (typeof dest === 'string') dest = await pdf.getDestination(dest);
+                if (!dest || !Array.isArray(dest)) return null;
+                const pageIndex = await pdf.getPageIndex(dest[0]);
+                return pageIndex + 1;
             } catch (e) {
-                errorEl.textContent = "Error: Could not encode link.";
-                errorEl.style.display = 'block';
-                return;
+                return null;
             }
-
-            // Build the worker URL with the encoded file parameter
-            const workerWithFile = `${WORKER_URL}?file=${base64Link}`;
-
-            // Build viewer URL with restriction parameters
-            const viewerParams = new URLSearchParams();
-            viewerParams.set('file', workerWithFile);
-            viewerParams.set('limit', limit.toString());
-            viewerParams.set('download', allowDownload.toString());
-
-            const finalUrl = `${VIEWER_URL}?${viewerParams.toString()}`;
-
-            // Generate button text based on settings
-            const buttonText = limit === 100 
-                ? (allowDownload ? 'Open PDF' : 'Open PDF (View Only)')
-                : `Open Preview (${limit}%)`;
-
-            // Create the standard HTML embed code
-            const embedHtml = `<!-- Mobile Friendly Link -->
-<div style="text-align: right; margin-bottom: 8px;">
-    <a href="${finalUrl}" target="_blank" rel="noopener" style="text-decoration: none; color: #333; font-family: sans-serif; font-size: 0.9em; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; background-color: #f9f9f9;">
-        <span style="font-size: 1.1em; margin-right: 4px;">&#x2197;</span> ${buttonText}
-    </a>
-</div>
-<!-- The PDF Reader -->
-<iframe src="${finalUrl}" width="100%" height="900" style="border: 1px solid #ccc; border-radius: 4px;" referrerpolicy="origin" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>`;
-
-            // Create the self-contained Accordion Code
-            const accordionCode = `<style>
-.dtl_book_accordion {
-  margin-bottom: 0 !important;
-  border: none !important;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: none !important;
-}
-
-.dtl_book_header {
-  background-color: #f9f9f9;
-  padding: 18px 18px;
-  cursor: pointer;
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 14px !important;
-  font-family: sans-serif;
-  transition: background-color 0.2s;
-  box-shadow: none !important;
-}
-.dtl_book_header:hover { background-color: #f0f0f0; }
-.dtl_book_header:focus { outline: none !important; }
-
-.dtl_citation {
-  flex: 0 1 auto;
-  min-width: 0;
-  text-align: left !important;
-  font-size: clamp(11.264px, 1.2288vw, 15.36px) !important;
-  font-weight: 800 !important;
-  line-height: 1.2;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
-
-.dtl_toggle_text {
-  flex: 0 0 auto;
-  font-size: 1rem !important;
-  font-weight: 800 !important;
-  color: #666;
-  padding: 6px 14px;
-  border: none !important;
-  border-radius: 999px;
-  background: #fff;
-  white-space: nowrap;
-  box-shadow: none !important;
-}
-.dtl_book_header:hover .dtl_toggle_text { background: #eee; }
-
-.dtl_book_content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
-.dtl_book_accordion.dtl_open .dtl_book_content { max-height: 2000px; }
-
-.dtl_book_content_inner {
-  padding: 0;
-  background: transparent;
-  margin: 0;
-}
-.dtl_book_accordion.dtl_open .dtl_book_content_inner {
-  padding: 12px;
-  background: #fff;
-}
-
-.dtl_fullscreen_link { text-align: right; margin-bottom: 8px; }
-.dtl_fullscreen_link a {
-  text-decoration: none;
-  color: #333;
-  font-family: sans-serif;
-  font-size: 0.9em;
-  border: none !important;
-  padding: 5px 10px;
-  border-radius: 4px;
-  background-color: #f9f9f9;
-  box-shadow: none !important;
-}
-.dtl_fullscreen_link a:hover { background-color: #eee; }
-</style>
-
-<div class="dtl_book_accordion">
-  <div class="dtl_book_header" tabindex="0"
-    onclick="(function(el){var a=el.parentElement,t=el.querySelector('.dtl_toggle_text');a.classList.toggle('dtl_open');t.textContent=a.classList.contains('dtl_open')?'Collapse':'Click to See Preview';})(this)"
-    onkeydown="if(event.key==='Enter'){this.click()}">
-    <div class="dtl_citation">${citation}</div>
-    <span class="dtl_toggle_text">Click to See Preview</span>
-  </div>
-
-  <div class="dtl_book_content">
-    <div class="dtl_book_content_inner">
-      <div class="dtl_fullscreen_link">
-        <a href="${finalUrl}" target="_blank" rel="noopener">
-          <span style="margin-right: 4px;">↗</span> ${buttonText}
-        </a>
-      </div>
-      <iframe src="${finalUrl}" width="100%" height="700"
-        style="border: none !important; border-radius: 4px; box-shadow: none !important;"
-        referrerpolicy="origin" allowfullscreen></iframe>
-    </div>
-  </div>
-</div>`;
-
-            // Show Results
-            document.getElementById('finalLink').textContent = finalUrl;
-            document.getElementById('embedCode').textContent = embedHtml;
-            
-            // Show/hide accordion section based on collapsible mode
-            if (isCollapsible) {
-                document.getElementById('accordionCode').textContent = accordionCode;
-                document.getElementById('accordionDivider').style.display = 'block';
-                document.getElementById('accordionSection').style.display = 'block';
-            } else {
-                document.getElementById('accordionDivider').style.display = 'none';
-                document.getElementById('accordionSection').style.display = 'none';
-            }
-            
-            document.getElementById('results').style.display = 'block';
         }
 
-        // --- Clear Form Function ---
-        function clearForm() {
-            document.getElementById('dropboxLink').value = '';
-            document.getElementById('citation').value = '';
-            document.getElementById('linkError').style.display = 'none';
-            document.getElementById('results').style.display = 'none';
+        // =============================================================
+        // SIGN CHAPTERS VIA WORKER
+        // =============================================================
+        async function signAllChapters(password) {
+            const includeChapterName = document.getElementById('includeChapterName').checked;
+            const allowDownload = document.getElementById('allowDownload').checked;
             
-            // Reset restrictions to defaults
-            limitSlider.value = 20;
-            noLimitCheckbox.checked = false;
-            downloadCheckbox.checked = false;
-            collapsibleCheckbox.checked = false;
-            citationRow.style.display = 'none';
-            updateUI();
+            const chapters = extractedChapters.map(ch => ({
+                title: includeChapterName ? ch.title : '',
+                start: ch.start,
+                end: ch.end
+            }));
             
-            document.getElementById('dropboxLink').focus();
+            const response = await fetch(WORKER_URL + '/batch-sign', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    password,
+                    dropbox: currentDropboxUrl,
+                    chapters,
+                    download: allowDownload,
+                    expires: 0
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            signedTokens = data.tokens;
         }
 
-        // --- Copy Functionality ---
-        function copyToClipboard(elementId, btnElement) {
-            const textToCopy = document.getElementById(elementId).textContent;
+        // =============================================================
+        // DISPLAY RESULTS
+        // =============================================================
+        function displayResults() {
+            const body = document.getElementById('resultsBody');
+            const showAccordion = document.getElementById('enableAccordion').checked;
+            
+            let html = '<div class="results-header">' +
+                '<div class="results-meta">' + extractedChapters.length + ' chapters · ' + pdfTotalPages + ' total pages</div>' +
+                '<div class="results-actions">' +
+                    '<button class="btn btn-secondary btn-sm" onclick="copyAllUrls()">' +
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>' +
+                        'Copy All URLs' +
+                    '</button>' +
+                    '<button class="btn btn-secondary btn-sm" onclick="exportCSV()">' +
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' +
+                        'Export CSV' +
+                    '</button>' +
+                '</div>' +
+            '</div>' +
+            '<div class="chapter-list">';
+            
+            extractedChapters.forEach((chapter, i) => {
+                html += '<div class="chapter-item" id="chapter-' + i + '">' +
+                    '<div class="chapter-header" onclick="toggleChapter(' + i + ')">' +
+                        '<div class="chapter-info">' +
+                            '<div class="chapter-title">' + escapeHtml(chapter.title) + '</div>' +
+                            '<div class="chapter-meta">Pages ' + chapter.start + '–' + chapter.end + ' · ' + chapter.pageCount + ' pages</div>' +
+                        '</div>' +
+                        '<div class="chapter-toggle">' +
+                            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="chapter-details">' +
+                        generateCodeSections(i, chapter, showAccordion) +
+                    '</div>' +
+                '</div>';
+            });
+            
+            html += '</div>';
+            body.innerHTML = html;
+        }
 
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = btnElement.textContent;
-                btnElement.textContent = "Copied!";
-                btnElement.style.background = "#d1e7dd";
-                btnElement.style.borderColor = "#badbcc";
-                btnElement.style.color = "#0f5132";
+        function generateCodeSections(index, chapter, showAccordion) {
+            const url = getChapterUrl(index);
+            const buttonText = 'Open Chapter';
+            
+            // Standard embed code
+            const embedCode = '<!-- ' + chapter.title + ' (Pages ' + chapter.start + '-' + chapter.end + ') -->\n' +
+'<div style="text-align: right; margin-bottom: 8px;">\n' +
+'    <a href="' + url + '" target="_blank" rel="noopener" style="text-decoration: none; color: #333; font-family: sans-serif; font-size: 0.9em; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; background-color: #f9f9f9;">\n' +
+'        <span style="font-size: 1.1em; margin-right: 4px;">&#x2197;</span> ' + buttonText + '\n' +
+'    </a>\n' +
+'</div>\n' +
+'<iframe src="' + url + '" width="100%" height="700" style="border: 1px solid #ccc; border-radius: 4px;" referrerpolicy="origin" allowfullscreen></iframe>';
 
+            // Accordion code
+            const accordionCode = '<style>\n' +
+'.dtl_book_accordion { margin-bottom: 0 !important; border: none !important; border-radius: 6px; overflow: hidden; box-shadow: none !important; }\n' +
+'.dtl_book_header { background-color: #f9f9f9; padding: 18px; cursor: pointer; display: flex !important; align-items: center !important; gap: 14px !important; font-family: sans-serif; transition: background-color 0.2s; }\n' +
+'.dtl_book_header:hover { background-color: #f0f0f0; }\n' +
+'.dtl_citation { flex: 0 1 auto; font-size: clamp(11px, 1.2vw, 15px) !important; font-weight: 800 !important; }\n' +
+'.dtl_toggle_text { flex: 0 0 auto; font-size: 1rem !important; font-weight: 800 !important; color: #666; padding: 6px 14px; border-radius: 999px; background: #fff; white-space: nowrap; }\n' +
+'.dtl_book_header:hover .dtl_toggle_text { background: #eee; }\n' +
+'.dtl_book_content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }\n' +
+'.dtl_book_accordion.dtl_open .dtl_book_content { max-height: 2000px; }\n' +
+'.dtl_book_content_inner { padding: 0; background: transparent; margin: 0; }\n' +
+'.dtl_book_accordion.dtl_open .dtl_book_content_inner { padding: 12px; background: #fff; }\n' +
+'.dtl_fullscreen_link { text-align: right; margin-bottom: 8px; }\n' +
+'.dtl_fullscreen_link a { text-decoration: none; color: #333; font-family: sans-serif; font-size: 0.9em; padding: 5px 10px; border-radius: 4px; background-color: #f9f9f9; }\n' +
+'.dtl_fullscreen_link a:hover { background-color: #eee; }\n' +
+'</style>\n\n' +
+'<div class="dtl_book_accordion">\n' +
+'  <div class="dtl_book_header" tabindex="0" onclick="(function(el){var a=el.parentElement,t=el.querySelector(\'.dtl_toggle_text\');a.classList.toggle(\'dtl_open\');t.textContent=a.classList.contains(\'dtl_open\')?\'Collapse\':\'Click to See Preview\';})(this)" onkeydown="if(event.key===\'Enter\'){this.click()}">\n' +
+'    <div class="dtl_citation">' + escapeHtml(chapter.title) + '</div>\n' +
+'    <span class="dtl_toggle_text">Click to See Preview</span>\n' +
+'  </div>\n' +
+'  <div class="dtl_book_content">\n' +
+'    <div class="dtl_book_content_inner">\n' +
+'      <div class="dtl_fullscreen_link">\n' +
+'        <a href="' + url + '" target="_blank" rel="noopener"><span style="margin-right: 4px;">↗</span> ' + buttonText + '</a>\n' +
+'      </div>\n' +
+'      <iframe src="' + url + '" width="100%" height="700" style="border: none !important; border-radius: 4px;" referrerpolicy="origin" allowfullscreen></iframe>\n' +
+'    </div>\n' +
+'  </div>\n' +
+'</div>';
+
+            let html = '<div class="code-section">' +
+                '<div class="code-label">Direct URL</div>' +
+                '<div class="code-box-wrapper">' +
+                    '<div class="code-box url-only" id="url-' + index + '">' + url + '</div>' +
+                    '<button class="copy-btn" onclick="copyCode(\'url-' + index + '\', this)">Copy</button>' +
+                '</div>' +
+            '</div>' +
+            
+            '<div class="code-section">' +
+                '<div class="code-label">Standard Embed Code</div>' +
+                '<div class="code-box-wrapper">' +
+                    '<div class="code-box" id="embed-' + index + '">' + escapeHtml(embedCode) + '</div>' +
+                    '<button class="copy-btn" onclick="copyCode(\'embed-' + index + '\', this)">Copy</button>' +
+                '</div>' +
+            '</div>';
+            
+            if (showAccordion) {
+                html += '<div class="section-divider"></div>' +
+                '<div class="code-section">' +
+                    '<div class="code-label">Accordion Embed Code</div>' +
+                    '<div class="code-box-wrapper">' +
+                        '<div class="code-box" id="accordion-' + index + '">' + escapeHtml(accordionCode) + '</div>' +
+                        '<button class="copy-btn" onclick="copyCode(\'accordion-' + index + '\', this)">Copy</button>' +
+                    '</div>' +
+                '</div>';
+            }
+            
+            return html;
+        }
+
+        function toggleChapter(index) {
+            const item = document.getElementById('chapter-' + index);
+            item.classList.toggle('expanded');
+        }
+
+        function showNoBookmarks() {
+            const body = document.getElementById('resultsBody');
+            body.innerHTML = '<div class="empty-state">' +
+                '<h3>No Chapter Bookmarks Found</h3>' +
+                '<p>This PDF doesn\'t have top-level bookmarks. Add bookmarks to the PDF first.</p>' +
+            '</div>';
+            hideStatus();
+        }
+
+        // =============================================================
+        // COPY / EXPORT FUNCTIONS
+        // =============================================================
+        function getChapterUrl(index) {
+            const token = signedTokens[index].token;
+            const workerUrl = WORKER_URL + '?token=' + encodeURIComponent(token);
+            return VIEWER_URL + '?file=' + encodeURIComponent(workerUrl);
+        }
+
+        function copyCode(elementId, btn) {
+            const el = document.getElementById(elementId);
+            const text = el.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
                 setTimeout(() => {
-                    btnElement.textContent = originalText;
-                    btnElement.style.background = "white";
-                    btnElement.style.borderColor = "#ccc";
-                    btnElement.style.color = "#333";
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
                 }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
             });
         }
 
-        // --- Enter key to generate ---
-        document.getElementById('dropboxLink').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                generateLink();
-            }
+        function copyAllUrls() {
+            const lines = extractedChapters.map((ch, i) => 
+                ch.title + '\n' + getChapterUrl(i)
+            ).join('\n\n');
+            
+            navigator.clipboard.writeText(lines).then(() => {
+                showStatus('All URLs copied to clipboard!', 'success');
+            });
+        }
+
+        function exportCSV() {
+            let csv = 'Chapter Title,Start Page,End Page,Page Count,URL\n';
+            
+            extractedChapters.forEach((ch, i) => {
+                const url = getChapterUrl(i);
+                csv += '"' + ch.title.replace(/"/g, '""') + '",' + ch.start + ',' + ch.end + ',' + ch.pageCount + ',"' + url + '"\n';
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'chapter-links.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Enter key handlers
+        document.getElementById('dropboxUrl').addEventListener('keypress', e => {
+            if (e.key === 'Enter') analyzePDF();
+        });
+        
+        document.getElementById('password').addEventListener('keypress', e => {
+            if (e.key === 'Enter') document.getElementById('dropboxUrl').focus();
         });
     </script>
-
 </body>
 </html>
